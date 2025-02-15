@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ukk_kasir/login.dart';
+import 'package:ukk_kasir/produk/index.dart';
 
 void main() {
   runApp(Homepage());
@@ -79,6 +80,18 @@ class _HomepageState extends State<Homepage> {
                 },
               ),
             ]),
+          ),
+          body: Stack(
+            children: [
+              TabBarView(
+                children: [
+                  Center(child: Text('Detail Pelanggan Content')),
+                  Center(child: Text('Pelanggan Content')),
+                  produkIndex(),
+                  Center(child: Text('Penjualan Content')),
+                ],
+              ),
+            ],
           ),
         ),
       ),

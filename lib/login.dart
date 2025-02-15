@@ -12,11 +12,19 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   final SupabaseClient supabase = Supabase.instance.client;
 
   Future<void> _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
+
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Input tidak boleh kosong')),
+      );
+      return;
+    }
 
     try {
       final response = await supabase
@@ -25,32 +33,24 @@ class _LoginPageState extends State<LoginPage> {
           .eq('username', username)
           .maybeSingle();
 
-      if (response == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Username tidak ditemukan')),
-        );
-        return;
-      }
-
-      if (response['password'] == password) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Berhasil Login!')),
-        );
-
-        // Navigasi ke Homepage setelah login berhasil
+      if (response != null && response['password'] == password) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Homepage()),
         );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Berhasil Login!')),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Username dan password salah')),
+          SnackBar(content: Text('Input kosong salah satu')),
         );
       }
     } catch (error) {
       // Menangani error jika terjadi kesalahan pada query
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi kesalahan: $error')),
+        SnackBar(content: Text('Username atau Password Salah')),
       );
     }
   }
@@ -79,13 +79,14 @@ class _LoginPageState extends State<LoginPage> {
               textAlign: TextAlign.center,
               "Selamat Datang di Donut's Shop Lembut Donut's nya Bikin Nagih...!",
               style: TextStyle(
-                  fontSize: 23,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  ),
+                fontSize: 23,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 100),
             TextFormField(
+              key: _formKey,
               controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'UserName',
