@@ -14,11 +14,11 @@ class _produkIndexState extends State<produkIndex> {
   List<Map<String, dynamic>> produk = [];
   bool isLoading = true;
 
-  
+
   @override
   void initState() {
     super.initState();
-    fetchProduk;
+    fetchProduk();
   }
 
   Future<void> fetchProduk() async {
@@ -157,9 +157,7 @@ class _produkIndexState extends State<produkIndex> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => InsertProduk())
-          );
+              context, MaterialPageRoute(builder: (context) => InsertProduk()));
         },
         child: Icon(Icons.add),
       ),

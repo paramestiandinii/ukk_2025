@@ -10,21 +10,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final SupabaseClient supabase = Supabase.instance.client;
 
   Future<void> _login() async {
+    
     final username = _usernameController.text;
     final password = _passwordController.text;
-
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Input tidak boleh kosong')),
-      );
-      return;
-    }
 
     try {
       final response = await supabase
@@ -33,24 +27,29 @@ class _LoginPageState extends State<LoginPage> {
           .eq('username', username)
           .maybeSingle();
 
-      if (response != null && response['password'] == password) {
+      if (response == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Username tidak ditemukan!')),
+        );
+        return;
+      }
+
+      if (response['password'] == password) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login berhasil!')),
+        );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Homepage()),
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Berhasil Login!')),
-        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Input kosong salah satu')),
+          SnackBar(content: Text('Password atau Username salah!')),
         );
       }
-    } catch (error) {
-      // Menangani error jika terjadi kesalahan pada query
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Username atau Password Salah')),
+        SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
       );
     }
   }
@@ -58,28 +57,18 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: Icon(Icons.arrow_back_rounded, color: Colors.black, size: 20),
-        title: Text(
-          'Admin Administrator',
-          style: TextStyle(
-            fontSize: 25,
-            color: Colors.black,
-          ),
-        ),
-        backgroundColor: Colors.pink,
-      ),
       body: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset("aset/donut.png", height: 150),
+            Padding(padding: EdgeInsets.all(16)),
             Text(
               textAlign: TextAlign.center,
               "Selamat Datang di Donut's Shop Lembut Donut's nya Bikin Nagih...!",
               style: TextStyle(
-                fontSize: 23,
+                fontSize: 22,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
@@ -89,17 +78,17 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               controller: _usernameController,
               decoration: InputDecoration(
-                labelText: 'UserName',
-                icon: Icon(
-                  Icons.person_2_sharp,
-                  color: Colors.black,
-                  size: 30,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-              ),
+                  labelText: 'UserName',
+                  prefixIcon: Icon(
+                    Icons.person,
+                    color: Colors.black,
+                    size: 25,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Username tidak boleh kosong';
@@ -107,22 +96,22 @@ class _LoginPageState extends State<LoginPage> {
                 return null;
               },
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 15),
             TextFormField(
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: 'Password',
-                icon: Icon(
-                  Icons.key,
-                  color: Colors.black,
-                  size: 30,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-              ),
+                  labelText: 'Password',
+                  prefixIcon: Icon(
+                    Icons.password,
+                    color: Colors.black,
+                    size: 25,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Password tidak boleh kosong';

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ukk_kasir/login.dart';
+import 'package:ukk_kasir/pelanggan/index.dart';
 import 'package:ukk_kasir/produk/index.dart';
+import 'package:ukk_kasir/user.dart';
 
 void main() {
   runApp(Homepage());
@@ -43,7 +45,9 @@ class _HomepageState extends State<Homepage> {
                 Tab(icon: Icon(Icons.drafts), text: 'Detail Penjualan'),
                 Tab(icon: Icon(Icons.person_3_sharp), text: 'Pelanggan'),
                 Tab(icon: Icon(Icons.shopping_bag_sharp), text: 'Produk'),
-                Tab(icon: Icon(Icons.shopping_cart_checkout_sharp),text: 'Penjualan'),
+                Tab(
+                    icon: Icon(Icons.shopping_cart_checkout_sharp),
+                    text: 'Penjualan'),
               ],
             ),
           ),
@@ -71,12 +75,23 @@ class _HomepageState extends State<Homepage> {
                     ]),
               ),
               ListTile(
+                leading: Icon(Icons.app_registration_outlined),
+                title: Text('Registrasi'),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserRegistrasi()),
+                  );
+                },
+              ),
+              ListTile(
                 leading: Icon(Icons.logout_sharp),
                 title: Text('Logout'),
                 onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('logout selected')));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 },
               ),
             ]),
@@ -86,7 +101,7 @@ class _HomepageState extends State<Homepage> {
               TabBarView(
                 children: [
                   Center(child: Text('Detail Pelanggan Content')),
-                  Center(child: Text('Pelanggan Content')),
+                  indexPelanggan(),
                   produkIndex(),
                   Center(child: Text('Penjualan Content')),
                 ],
