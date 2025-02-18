@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:ukk_kasir/DetailPenjualan/index.dart';
 import 'package:ukk_kasir/produk/insert.dart';
 import 'package:ukk_kasir/produk/update.dart';
 
@@ -12,8 +13,9 @@ class produkIndex extends StatefulWidget {
 
 class _produkIndexState extends State<produkIndex> {
   List<Map<String, dynamic>> produk = [];
+  List<Map<String, dynamic>> filterProduk = [];
   bool isLoading = true;
-
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -29,6 +31,7 @@ class _produkIndexState extends State<produkIndex> {
       final response = await Supabase.instance.client.from('produk').select();
       setState(() {
         produk = List<Map<String, dynamic>>.from(response);
+        filterProduk = produk;
         isLoading = false;
       });
     } catch (e) {
@@ -37,6 +40,16 @@ class _produkIndexState extends State<produkIndex> {
         isLoading = false;
       });
     }
+  }
+
+  void searchProduk(String query) {
+    final hasilPencarian = produk.where((item) {
+      final NamaProduk = item['NamaProduk']?.toString().toLowerCase() ?? '';
+      return NamaProduk.contains(query.toLowerCase());
+    }).toList();
+    setState(() {
+      filterProduk = hasilPencarian;
+    });
   }
 
   Future<void> deleteProduk(int ProdukID) async {
@@ -53,114 +66,130 @@ class _produkIndexState extends State<produkIndex> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 250, 189, 209),
+        title: TextField(
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: 'Cari produk..',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.search_sharp),
+              onPressed: () {
+              searchController.clear();
+              searchProduk('');
+            }),
+          ),
+          onChanged: searchProduk,
+        ),
+      ),
       body: produk.isEmpty
           ? Center(
-              child: Text(
-                'Tidak Ada Produk',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
+              child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              padding: EdgeInsets.all(8),
-              itemCount: produk.length,
-              itemBuilder: (context, index) {
-                final roduk = produk[index];
-                return Card(
-                  elevation: 4,
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
+          : filterProduk.isEmpty
+              ? Center(
+                  child: Text(
+                    'Tidak Ada Produk',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                )
+              : ListView.builder(
+                  padding: EdgeInsets.all(8),
+                  itemCount: produk.length,
+                  itemBuilder: (context, index) {
+                    final roduk = filterProduk[index];
+                    return Card(
+                      elevation: 4,
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      child: ListTile(
+                        title: Text(
                             roduk['NamaProduk']?.toString() ??
-                                'Produk Tidak Tersedia',
+                                'produk tidak tersedia',
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            roduk['Harga']?.toString() ??
-                                'Harga Tidak Tersedia',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            roduk['Stok']?.toString() ?? 'Stok Tidak Tersedia',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          Divider(),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.edit_calendar_sharp),
-                                    onPressed: () {
-                                      final ProdukID = roduk['ProdukID'] ?? 0;
-                                      if (ProdukID != 0) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UpdateProduk(
-                                                      produkID: ProdukID)),
-                                        );
-                                      } else {
-                                        print('Id produk tidak valid');
-                                      }
-                                    }),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.delete_sharp,
-                                      color: Colors.redAccent,
-                                    ),
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text('Hapus Produk'),
-                                              content: Text(
-                                                  'Apakah anda yakin menghapus produk ini'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  child: Text('Batal'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    deleteProduk(
-                                                        roduk['ProdukID']);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text('Hapus'),
-                                                ),
-                                              ],
-                                            );
-                                          });
-                                    }),
-                              ]),
-                        ],
-                      )),
-                );
-              },
-            ),
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                'Harga: ${roduk['Harga']?.toString() ?? 'tidak tersedia'}'),
+                            Text(
+                                'Stok: ${roduk['Stok']?.toString() ?? 'tidak tersedia'}'),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                                icon: Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UpdateProduk(
+                                            produkID: roduk['ProdukID'])),
+                                  );
+                                }),
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('hapus produk'),
+                                      content: Text(
+                                          'Apakah anda yakin menghapus produk ini?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('Batal'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            deleteProduk(roduk['ProdukID']);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('Hapus'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailPenjualan(produk: roduk)),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => InsertProduk()));
+            context,
+            MaterialPageRoute(builder: (context) => InsertProduk()),
+          );
         },
         child: Icon(Icons.add),
       ),
+      backgroundColor: Color.fromARGB(255, 250, 189, 209),
     );
   }
 }

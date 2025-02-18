@@ -16,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   final SupabaseClient supabase = Supabase.instance.client;
 
   Future<void> _login() async {
-    
     final username = _usernameController.text;
     final password = _passwordController.text;
 
@@ -58,10 +57,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
             Image.asset("aset/donut.png", height: 150),
             Padding(padding: EdgeInsets.all(16)),
             Text(
@@ -74,70 +73,77 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(height: 100),
-            TextFormField(
-              key: _formKey,
-              controller: _usernameController,
-              decoration: InputDecoration(
-                  labelText: 'UserName',
-                  prefixIcon: Icon(
-                    Icons.person,
-                    color: Colors.black,
-                    size: 25,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Username tidak boleh kosong';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 15),
-            TextFormField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(
-                    Icons.password,
-                    color: Colors.black,
-                    size: 25,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Password tidak boleh kosong';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              child: Text(
-                "Login",
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                fixedSize: Size(200, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: const Color.fromARGB(255, 248, 173, 198),
+            Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 350,
+                      child: TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'UserName',
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: Colors.black,
+                            size: 25,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Username tidak boleh kosong';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    SizedBox(
+                      width: 350,
+                      child: TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                            size: 25,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Password tidak boleh kosong';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: _login,
+                        child: Text('Login',
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            fixedSize: Size(200, 50),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                      ),
+                    )
+                  ],
+                ))
+          ])),
+          backgroundColor: Color.fromARGB(255, 250, 189, 209),
     );
   }
 }
