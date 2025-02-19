@@ -56,94 +56,109 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          child: Column(
+      body: SafeArea(
+        child: Center(
+          child : SingleChildScrollView(
+            child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-            Image.asset("aset/donut.png", height: 150),
-            Padding(padding: EdgeInsets.all(16)),
-            Text(
-              textAlign: TextAlign.center,
-              "Selamat Datang di Donut's Shop Lembut Donut's nya Bikin Nagih...!",
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 100),
-            Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 350,
-                      child: TextFormField(
-                        controller: _usernameController,
-                        decoration: InputDecoration(
-                          labelText: 'UserName',
-                          prefixIcon: Icon(
-                            Icons.person,
-                            color: Colors.black,
-                            size: 25,
+                Image.asset("aset/donut.png", height: 150),
+                Padding(padding: EdgeInsets.all(16)),
+                Text(
+                  "Selamat Datang di Donut's Shop Lembut Donut's nya Bikin Nagih...!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 50),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextFormField(
+                          controller: _usernameController,
+                          decoration: InputDecoration(
+                            labelText: 'UserName',
+                            prefixIcon: Icon(
+                              Icons.person,
+                              color: Colors.black,
+                              size: 25,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Username tidak boleh kosong';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Username tidak boleh kosong';
-                          }
-                          return null;
-                        },
                       ),
-                    ),
-                    SizedBox(height: 15),
-                    SizedBox(
-                      width: 350,
-                      child: TextFormField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: Icon(
-                            Icons.lock,
-                            color: Colors.black,
-                            size: 25,
+                      SizedBox(height: 15),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextFormField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: Icon(
+                              Icons.lock,
+                              color: Colors.black,
+                              size: 25,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Password tidak boleh kosong';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password tidak boleh kosong';
-                          }
-                          return null;
-                        },
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      width: 200,
-                      child: ElevatedButton(
-                        onPressed: _login,
-                        child: Text('Login',
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
+                      SizedBox(height: 15),
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: _login,
+                          child: Text(
+                            'Login',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                             fixedSize: Size(200, 50),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
                       ),
-                    )
-                  ],
-                ))
-          ])),
-          backgroundColor: Color.fromARGB(255, 250, 189, 209),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ),
+          
+        ),
+      ),
+      backgroundColor: Color.fromARGB(255, 250, 189, 209),
     );
   }
 }

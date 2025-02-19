@@ -32,7 +32,7 @@ class _produkDetailState extends State<produkDetail> {
     final supabase = Supabase.instance.client;
 
     try {
-      final response = await supabase.from('detailPenjualan').insert({
+      final response = await supabase.from('detailpenjualan').insert({
         'ProdukID': ProdukID,
         'PenjualanID': PenjualanID,
         'JumlahProduk': jumlahPesanan,

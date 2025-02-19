@@ -31,7 +31,7 @@ class _produkIndexState extends State<produkIndex> {
       final response = await Supabase.instance.client.from('produk').select();
       setState(() {
         produk = List<Map<String, dynamic>>.from(response);
-        filterProduk = produk;
+        filterProduk = List.from(produk);
         isLoading = false;
       });
     } catch (e) {
@@ -98,9 +98,9 @@ class _produkIndexState extends State<produkIndex> {
                 )
               : ListView.builder(
                   padding: EdgeInsets.all(8),
-                  itemCount: produk.length,
+                  itemCount: filterProduk.length,
                   itemBuilder: (context, index) {
-                    final roduk = filterProduk[index];
+                    final produkItem = filterProduk[index];
                     return Card(
                       elevation: 4,
                       margin: EdgeInsets.symmetric(vertical: 8),
@@ -108,7 +108,7 @@ class _produkIndexState extends State<produkIndex> {
                           borderRadius: BorderRadius.circular(12)),
                       child: ListTile(
                         title: Text(
-                            roduk['NamaProduk']?.toString() ??
+                            produkItem['NamaProduk']?.toString() ??
                                 'produk tidak tersedia',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
@@ -116,9 +116,9 @@ class _produkIndexState extends State<produkIndex> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                'Harga: ${roduk['Harga']?.toString() ?? 'tidak tersedia'}'),
+                                'Harga: ${produkItem['Harga']?.toString() ?? 'tidak tersedia'}'),
                             Text(
-                                'Stok: ${roduk['Stok']?.toString() ?? 'tidak tersedia'}'),
+                                'Stok: ${produkItem['Stok']?.toString() ?? 'tidak tersedia'}'),
                           ],
                         ),
                         trailing: Row(
@@ -131,7 +131,7 @@ class _produkIndexState extends State<produkIndex> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => UpdateProduk(
-                                            produkID: roduk['ProdukID'])),
+                                            produkID: produkItem['ProdukID'])),
                                   );
                                 }),
                             IconButton(
@@ -155,7 +155,7 @@ class _produkIndexState extends State<produkIndex> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            deleteProduk(roduk['ProdukID']);
+                                            deleteProduk(produkItem['ProdukID']);
                                             Navigator.pop(context);
                                           },
                                           child: Text('Hapus'),
@@ -173,7 +173,8 @@ class _produkIndexState extends State<produkIndex> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    DetailPenjualan(produk: roduk)),
+                                    DetailPenjualan(produk: produkItem)
+                                    ),
                           );
                         },
                       ),

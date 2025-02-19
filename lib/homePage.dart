@@ -4,6 +4,7 @@ import 'package:ukk_kasir/login.dart';
 import 'package:ukk_kasir/pelanggan/index.dart';
 import 'package:ukk_kasir/produk/index.dart';
 import 'package:ukk_kasir/user.dart';
+import 'package:ukk_kasir/user/index.dart';
 
 void main() {
   runApp(Homepage());
@@ -83,7 +84,7 @@ class _HomepageState extends State<Homepage> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => UserRegistrasi()),
+                  MaterialPageRoute(builder: (context) => UserIndex()),
                 );
               },
             ),
@@ -101,26 +102,23 @@ class _HomepageState extends State<Homepage> {
         ),
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color.fromARGB(255, 250, 189, 209),
+          type: BottomNavigationBarType.fixed,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black,
-            
-
+            showSelectedLabels: true,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                backgroundColor: Color.fromARGB(255, 250, 189, 209),
-                  icon: Icon(Icons.drafts), label: 'Detail Penjualan'),
+                  icon: Icon(Icons.drafts), label: 'Riwayat Transaksi'),
               BottomNavigationBarItem(
-                backgroundColor: Color.fromARGB(255, 250, 189, 209),
                   icon: Icon(Icons.person), label: 'Pelanggan'),
               BottomNavigationBarItem(
-                backgroundColor: Color.fromARGB(255, 250, 189, 209),
                   icon: Icon(Icons.shopping_bag_sharp), label: 'Produk'),
               BottomNavigationBarItem(
-                backgroundColor: Color.fromARGB(255, 250, 189, 209),
                   icon: Icon(Icons.shopping_cart_checkout_sharp),
-                  label: 'Penjualan'),
+                  label: 'Transaksi'),
 
             ]),
       ),

@@ -14,11 +14,14 @@ class indexPelanggan extends StatefulWidget {
 
 class _indexPelangganState extends State<indexPelanggan> {
   List<Map<String, dynamic>> pelanggan = [];
+  List<Map<String, dynamic>> filterPelanggan = [];
   bool isLoading = true;
+  TextEditingController _searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
     fetchpelanggan();
+    _searchController.addListener(_filterPelanggan);
   }
 
   Future<void> fetchpelanggan() async {
@@ -30,6 +33,7 @@ class _indexPelangganState extends State<indexPelanggan> {
           await Supabase.instance.client.from('pelanggan').select();
       setState(() {
         pelanggan = List<Map<String, dynamic>>.from(response);
+        filterPelanggan = pelanggan;
         isLoading = false;
       });
     } catch (e) {
@@ -40,6 +44,17 @@ class _indexPelangganState extends State<indexPelanggan> {
         isLoading = false;
       });
     }
+  }
+  void _filterPelanggan() {
+    String query = _searchController.text.toLowerCase();
+    setState(() {
+      filterPelanggan = pelanggan
+      .where((plg) => 
+      plg['NamaPelanggan'].toLowerCase().contains(query)|| 
+      plg['Alamat'].toLowerCase().contains(query)||
+      plg['NomorTelepon'].toLowerCase().contains(query)
+    ).toList();
+    });
   }
 
   Future<void> deletePelanggan(int id) async {
@@ -61,11 +76,31 @@ class _indexPelangganState extends State<indexPelanggan> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 250, 189, 209),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(8),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Cari Pelanggan...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12)
+                )
+              ),
+
+            )
+          ),
+          )
+      ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : pelanggan.isEmpty
+          : filterPelanggan.isEmpty
               ? Center(
                   child: Text(
                     'Tidak ada pelanggan',
@@ -79,9 +114,9 @@ class _indexPelangganState extends State<indexPelanggan> {
                     mainAxisSpacing: 12,
                   ),
                   padding: EdgeInsets.all(10),
-                  itemCount: pelanggan.length,
+                  itemCount: filterPelanggan.length,
                   itemBuilder: (context, index) {
-                    final plg = pelanggan[index];
+                    final plg = filterPelanggan[index];
                     return Card(
                       elevation: 4,
                       margin: EdgeInsets.symmetric(vertical: 8),
